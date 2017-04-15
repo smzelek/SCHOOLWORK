@@ -1,0 +1,3 @@
+Life.o: Life.cc Timer.hpp
+
+Timer.hpp:

@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void 
+printBits (void* valuePtr, size_t size);
+
+int main (int argc, char* argv[])
+{
+  unsigned x;
+  printf("x ==> ");
+  scanf("%x", &x);
+
+  printBits(&x, sizeof(unsigned));
+}
+
+void 
+printBits (void* valuePtr, size_t size)
+{
+  printf("%d\n", size);
+  for (size_t i = 0; i < size; ++i)
+  {
+    char* byte = (char*) valuePtr + 8*i;
+    for (int j = 7; j >= 0; --j)
+    {
+      printf("%d", *(byte >> j) & 1);
+    }
+  }
+  printf("\n");
+}

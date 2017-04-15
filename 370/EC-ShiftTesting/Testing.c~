@@ -1,0 +1,42 @@
+/*
+  Filename   : Testing.c
+  Author     : Steve Zelek
+  Course     : CSCI 370
+  Assignment : Extra Credit
+  Description: Testing the effects of shifting by word size.
+*/
+
+/**********************************************************/
+// System includes
+
+#include <stdio.h>
+#include <stdlib.h>
+
+/**********************************************************/
+// Function prototypes/global vars/typedefs
+
+/**********************************************************/
+
+int
+main (int argc, char* argv[])
+{
+  unsigned base;
+  int shift;
+  
+  printf("base     ==> ");
+  scanf("%x", &base);
+
+  printf("shift by ==> ");
+  scanf("%i", %shift);
+
+  unsigned result;
+  result = base >> shift;
+
+  printf("Shifting %x by %i results in %x.\n", base, shift, result);
+  
+  
+  return EXIT_SUCCESS;
+}
+
+/**********************************************************/
+/**********************************************************/

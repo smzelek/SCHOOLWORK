@@ -1,0 +1,44 @@
+[smzelek@liskov ShiftTestingEC]$ ./Testing left
+Base number in hex:  0xFFFFFFFF
+Do shifts from 1 to: 16
+Shift	  Result  
+-----	----------
+<< 1	0xFFFFFFF0
+<< 2	0xFFFFFF00
+<< 3	0xFFFFF000
+<< 4	0xFFFF0000
+<< 5	0xFFF00000
+<< 6	0xFF000000
+<< 7	0xF0000000
+<< 8	0xFFFFFFFF
+<< 9	0xFFFFFFF0
+<< 10	0xFFFFFF00
+<< 11	0xFFFFF000
+<< 12	0xFFFF0000
+<< 13	0xFFF00000
+<< 14	0xFF000000
+<< 15	0xF0000000
+<< 16	0xFFFFFFFF
+
+[smzelek@liskov ShiftTestingEC]$ ./Testing right
+Base number in hex:  0xFFFFFFFF 
+Do shifts from 1 to: 16
+Shift	  Result  
+-----	----------
+>> 1	0x0FFFFFFF
+>> 2	0x00FFFFFF
+>> 3	0x000FFFFF
+>> 4	0x0000FFFF
+>> 5	0x00000FFF
+>> 6	0x000000FF
+>> 7	0x0000000F
+>> 8	0xFFFFFFFF
+>> 9	0x0FFFFFFF
+>> 10	0x00FFFFFF
+>> 11	0x000FFFFF
+>> 12	0x0000FFFF
+>> 13	0x00000FFF
+>> 14	0x000000FF
+>> 15	0x0000000F
+>> 16	0xFFFFFFFF
+

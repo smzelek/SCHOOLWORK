@@ -1,0 +1,3 @@
+CountingSort.o: CountingSort.cc Timer.hpp
+
+Timer.hpp:

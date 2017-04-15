@@ -1,0 +1,102 @@
+/*
+  Filename   : FibZeros.s
+  Author     : Steve Zelek
+  Course     : CSCI 370
+  Description: Compute the fibonacci number for abs(n)...
+*/
+
+/**********************************************************/
+// Data
+.data
+prompt:
+	.string "n ==> "
+
+formatSpec:
+	.string "%d"
+
+output:
+	.string "The number of 0s in %d is %d\n"
+	
+/**********************************************************/
+// Code
+	.text
+	.align	4	
+	.globl	main
+
+main:
+	pushl	%ebp
+	movl	%esp, %ebp
+
+	# Save callee save register ebx
+	#  and move esp down past it
+	pushl 	%ebx
+	subl 	$4, %esp
+	
+	pushl	$prompt
+	call	printf
+
+	# Compute and push address of x
+	leal	-8(%ebp), %edx
+	pushl	%edx
+	pushl	$formatSpec
+	call	scanf
+
+	#do computation, have result in eax
+
+	pushl 	-8(%ebp)
+	call 	zeros
+	
+	# Output result
+	# Need to use address of x again, scanf overwrites...
+	pushl	%eax
+	pushl 	-8(%ebp)
+	pushl	$output
+	call	printf
+
+	# Return 0 from main
+	movl	$0, %eax
+
+	# Restore ebx
+	movl 	-4(%ebp), %ebx
+	movl	%ebp, %esp
+	popl	%ebp
+
+	ret
+
+zeros:
+	# Compute the number of 0s in the binary representation
+	#  of a given number
+
+	pushl 	%ebp
+	movl 	%esp, %ebp
+	pushl 	%ebx
+	subl 	$4, %esp
+	
+	# get variable passed in
+	movl	8(%ebp), %ebx
+
+	#shift by 1, 31 times
+	#store accumulation in eax
+
+	movl 	$32, %eax
+	movl 	$0, %edi
+loop:
+	cmpl 	$32, %edi
+	jge 	done
+
+	movl 	%ebx, %ecx
+	
+	and 	$0x1, %ecx
+	subl	%ecx, %eax
+	
+	shr 	$1, %ebx
+	inc 	%edi
+	jmp loop
+done:
+	#return will be eax
+	#restore callee save registers
+	movl 	-4(%ebp), %ebx
+	
+	movl	%ebp, %esp
+	popl	%ebp
+	ret

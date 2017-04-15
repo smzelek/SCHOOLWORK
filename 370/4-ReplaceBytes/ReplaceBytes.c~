@@ -1,0 +1,67 @@
+/*
+  Filename   : ReplaceBytes.c
+  Author     : Steve Zelek
+  Course     : CSCI 370
+  Assignment : Lab4
+  Description: Allows the user to replace a specified byte
+    in a hexadecimal integer.
+*/
+
+/**********************************************************/
+// System includes
+
+#include <stdio.h>
+#include <stdlib.h>
+
+/**********************************************************/
+// Function prototypes/global vars/typedefs
+
+unsigned
+replace_byte (unsigned x, int i, unsigned char b);
+
+/**********************************************************/
+
+int
+main (int argc, char* argv[])
+{
+  char line[5];
+  int anint;
+  
+  printf("\nEnter any integer:");
+  fgets(line,5,stdin);
+  sscanf(line,"%d", &anint);
+
+  printf("%d", anint);
+  /*
+  unsigned x;
+  int i;
+  unsigned char b;
+  
+  printf ("x ==> ");
+  scanf ("%x", &x); //x is the flag for hexadecimal ints
+  
+  printf ("i ==> ");
+  scanf ("%d", &i); //d is the flag for decimal ints
+  
+  printf ("b ==> ");
+  scanf ("%x", &b);
+
+  printf("%x", x);
+  printf("%d", i);
+  printf("%x", b);
+  */
+  return EXIT_SUCCESS;
+}
+
+/**********************************************************/
+
+unsigned
+replace_byte (unsigned x, int i, unsigned char b)
+{
+  return x;
+
+  
+}
+
+/**********************************************************/
+/**********************************************************/
