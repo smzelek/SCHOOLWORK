@@ -1,0 +1,94 @@
+/*
+  Filename   : PQSort.cc
+  Author     : Steve Zelek
+  Course     : CSCI 362-01
+  Assignment : Lab 8
+  Description: 
+*/   
+
+/************************************************************/
+// System includes
+
+#include <iostream>
+#include <string>
+#include <cstdlib>
+#include <algorithm>
+#include <vector>
+#include <fstream>
+
+/************************************************************/
+// Local includes
+
+#include "Timer.h"
+
+/************************************************************/
+// Using declarations
+
+using std::cout;
+using std::cin;
+using std::endl;
+using std::vector;
+using std::ifstream;
+
+/************************************************************/
+// Function prototypes/global vars/typedefs
+
+// Iterates through "filename" and adds all elements to vector "v".
+template<typename T>
+void
+readToVector (vector<T>& v, size_t numElem, string filename);
+
+/************************************************************/
+
+int      
+main (int argc, char* argv[]) 
+{        
+  if (argc != 3)
+  {
+    cout << "\nIncorrect inputs." << endl;
+    return EXIT_FAILURE;
+  }
+
+  string sortType (argv[1]);
+  long size = strtol (argv[2], 0, 10);
+  vector<string> v (size);
+
+  cout << "\n" << sortType
+       << "\n" << size << endl;
+  
+  readToVector (v, size, "Dictionary.txt");
+
+  //sort vector
+  //time sort
+
+  //output sort time
+  return EXIT_SUCCESS; 
+}
+
+/************************************************************/
+
+template<typename T>
+void
+readToVector (vector<T>& v, size_t numElem, string filename)
+{
+
+  // Safety check for the given file.
+  ifstream fileStream (filename);
+  if (!fileStream)
+  {
+    cout << "File not found. Exiting." << endl;
+    exit (-1);
+  }
+  
+  T elem;
+  size_t count = 0;
+  // Reads all items of type T into the given vector.
+  while (fileStream >> elem && count < numElem)
+  {
+    v.push_back (elem);
+    ++count;
+  }
+}
+
+/************************************************************/
+/************************************************************/

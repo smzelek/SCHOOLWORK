@@ -1,0 +1,82 @@
+/*
+  Filename   : Josephus.cc
+  Author     : Steve Zelek
+  Course     : CSCI 362-01
+  Assignment : Lab 6
+  Description: 
+*/   
+
+/************************************************************/
+// System includes
+
+#include <iostream>
+#include <string>
+#include <cstdlib>
+#include <list>
+
+/************************************************************/
+// Local includes
+
+/************************************************************/
+// Using declarations
+
+using std::cout;
+using std::cin;
+using std::list;
+using std::endl;
+
+/************************************************************/
+// Function prototypes/global vars/typedefs
+
+int
+execute (list<int> listedInts, size_t numJumps);
+
+/************************************************************/
+
+int      
+main (int argc, char* argv[]) 
+{
+  cout << "Please enter N: ";
+  size_t listLength;
+  cin >> listLength;
+
+  cout << "Please enter K: ";
+  size_t numJumps;
+  cin >> numJumps;
+  
+  //create list
+  list<int> intList;
+
+  for (size_t i = 0; i < listLength; ++i)
+    {
+      intList.push_back(i + 1);
+      cout << i + 1 << endl;
+    }
+  
+  //return remaining elem
+  cout << "\nThe surviving element is: "
+       << execute (intList, numJumps)
+       << endl;
+  
+  return EXIT_SUCCESS; 
+}
+
+/************************************************************/
+
+int
+execute (list<int> intList, size_t numJumps)
+{
+  list<int>::iterator iter = intList.begin ();
+  size_t temp = intList.size ();
+  cout << "Iter@" << *iter << " and size is " << temp << endl;
+  for (size_t numItems = 1; numItems < temp; ++numItems)
+  {
+    std::advance (iter, numJumps);
+    cout << "Erased " << *iter;
+    intList.erase (iter);
+  }
+
+  return intList.front ();
+}
+
+/************************************************************/

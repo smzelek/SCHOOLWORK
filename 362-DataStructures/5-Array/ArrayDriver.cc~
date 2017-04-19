@@ -1,0 +1,134 @@
+/*
+  Filename   : ArrayDriver.cc
+  Author     : Gary M. Zoppetti
+  Course     : CSCI 362-01
+  Assignment : N/A
+  Description: Test some methods of the Array class
+*/   
+
+/************************************************************/
+// System includes
+
+#include <cstdlib>
+#include <iostream>
+#include <string>
+#include <iterator>
+
+/************************************************************/
+// Local includes
+
+#include "Array.hpp"
+
+/************************************************************/
+// Using declarations
+
+using std::cin;
+using std::cout;
+using std::endl;
+using std::ostream_iterator;
+
+/************************************************************/
+// Function prototypes/global vars/typedefs
+
+void
+print (Array<int> A);
+
+/************************************************************/
+
+int      
+main (int argc, char* argv[]) 
+{
+  /*
+  size_t size;
+  cout << "Please input size of array ==> ";
+  cin >> size;
+
+  Array<int> A (size, 10);
+  print (A);
+
+  cout << "Added " << *( A.insert(A.end(), 3)) << endl;
+
+  print (A);
+
+  A.resize (3, 5);
+
+  cout << endl;
+  for (int i = 0; i < 15; ++i)
+  {
+    cout << " " << A[i];
+  }
+  cout << endl;
+  
+  A.pop_back ();
+  A.pop_back ();
+  cout << "Popped last 2 elements\n";
+  print (A);
+
+  for (int i = 0; i < 10; ++i)
+  {
+    A.insert (A.begin (), i);
+  }
+  cout << "Inserted 9 8 ... 0 at beginning\n";
+  print (A);
+
+  Array<int> B (3, 4);
+  cout << "B (3, 4)\n";
+  print (B);
+  
+  B = A;
+  cout << "B = A\n";
+  print (B);
+  
+  for (Array<int>::iterator i = A.begin (); i != A.end (); )
+  {
+    i = A.erase (i);
+  }
+  cout << "Erased all elements of A\n";
+  print (A);
+
+
+  Array<int> C (B.begin (), B.begin () + 2);
+  cout << "C (B.begin (), B.begin () + 2)\n";
+  print (C);
+
+  cout << "Inserting 0, 1, 2, 3, 4 at beginning of B\n";
+  for (int i = 0; i < 5; ++i)
+    B.insert (B.begin (), i);
+  print (B);
+
+  cout << "Resizing B to size 3\n";
+  B.resize (3);
+  print (B);
+
+  cout << "Resizing B to size 10\n";
+  B.resize (10);
+  print (B);
+  
+  
+  cout << "Printing B using the output operator\n";
+  cout << B << endl;
+  */
+
+  Array<int> B {4, 3, 2, 1, 0};
+  cout << B << endl;
+  
+  return EXIT_SUCCESS;
+}
+
+/************************************************************/
+
+// Copy ctor will get called as A is passed by value
+void
+print (Array<int> A) 
+{
+  cout << "[ ";
+  for (const auto& e : A)
+  {
+    cout << e << " ";
+  }
+  cout << "]" << endl;
+  cout << "Size = " << A.size () << ", Capacity = " 
+       << A.capacity () << endl << endl;
+}
+
+/************************************************************/

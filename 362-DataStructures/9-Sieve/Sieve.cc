@@ -1,0 +1,151 @@
+/*
+  Filename   : Sieve.cc
+  Author     : Steven Zelek
+  Course     : CSCI 362-01
+  Assignment : Lab9
+  Description: Creates a range of numbers [2,N] and finds all 
+  primes in that range. Implemented with vector and set.
+*/   
+
+/************************************************************/
+// System includes
+
+#include <iostream>
+#include <string>
+#include <cstdlib>
+#include <utility>
+#include <set>
+#include <vector>
+#include <math.h>
+
+/************************************************************/
+// Local includes
+
+#include "Timer.cc"
+
+/************************************************************/
+// Using declarations
+
+using std::cout;
+using std::set;
+using std::pair;
+using std::string;
+using std::vector;
+/************************************************************/
+// Function prototypes/global vars/typedefs
+
+pair<set<unsigned>, double>
+computePrimes (string listType, unsigned max);
+
+set<unsigned>
+filterSet (unsigned max);
+
+set<unsigned>
+filterVec (unsigned max);
+
+/************************************************************/
+
+int      
+main (int argc, char* argv[]) 
+{
+  string listType (argv[1]);
+  unsigned maxNum = strtol (argv[2],0,10); 
+   
+  auto retVal = computePrimes (listType, maxNum);
+  
+  cout << "Pi[" << maxNum << "] = " << retVal.first.size () << endl;
+  cout << "Time: " << retVal.second << " ms" << endl;
+
+  return EXIT_SUCCESS; 
+}
+
+/************************************************************/
+
+pair<set<unsigned>, double>
+computePrimes (string listType, unsigned max)
+{
+  pair<set<unsigned>, double> retVal;
+
+  Timer timer;
+  if (listType == "set")
+  {
+    timer.start ();
+    retVal.first = filterSet (max);
+    timer.stop ();
+  }
+  else if (listType == "vector")
+  {
+    timer.start ();
+    retVal.first = filterVec (max);
+    timer.stop ();
+  }
+
+  retVal.second = timer.getElapsedMs ();
+  return retVal;
+}
+
+/************************************************************/
+
+set<unsigned>
+filterSet (unsigned max)
+{
+  set<unsigned> numSet;
+  auto it = numSet.end ();
+
+  //most efficient way i can find to insert [2,N] into set
+  for (size_t i = 2; i <=max; ++i)
+  {
+    numSet.insert(it, i);
+  }
+
+  it = numSet.begin ();
+
+  //this seems pretty good, but is there a way to make it faster?
+  while (*it <= sqrt (max))
+  {
+    unsigned mult = max / (*it);
+    while (mult >= *it)
+    {
+      numSet.erase (mult * (*it));
+      --mult;
+    }
+
+    ++it;
+  }
+
+  return numSet;
+}
+
+/************************************************************/
+
+set<unsigned>
+filterVec (unsigned max)
+{
+  vector<bool> numVec (max + 1, true);
+
+  for (size_t i = 2; i <= sqrt (max); ++i)
+  {
+    unsigned mult = max / i;
+    while (mult >= i)
+    {
+      numVec[i * mult] = false;
+      --mult;
+    }
+  }
+
+  set<unsigned> numSet;
+
+  for (size_t i = 2; i <= max; ++i)
+  {
+    if (numVec[i])
+    {
+      cout << i << " ";
+      numSet.insert (i);
+    }
+  }
+  cout << endl;
+  return numSet;
+}
+
+/************************************************************/
+/************************************************************/

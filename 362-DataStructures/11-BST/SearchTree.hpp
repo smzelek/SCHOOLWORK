@@ -1,0 +1,655 @@
+/*
+  Filename   : SearchTree.hpp
+  Author     : Kevin Avila and Steve Zelek
+  Course     : CSCI 362
+  Assignment : Lab 11
+  Description: Binary search tree class, 
+               a basis for implementing associative containers. 
+*/
+
+/************************************************************/
+// Macro guard
+
+#ifndef SEARCHTREE_HPP
+#define SEARCHTREE_HPP
+
+/************************************************************/
+// System includes
+
+#include <iostream>
+#include <algorithm>
+#include <iterator>
+#include <queue>
+
+/************************************************************/
+// Local includes
+
+/************************************************************/
+// Using declarations
+
+using std::ostream;
+using std::ostream_iterator;
+using std::queue;
+
+/************************************************************/
+
+template<typename T>
+struct Node
+{
+  typedef Node* NodePtr;
+
+  Node (const T& d = T ())
+  {
+    data = d;
+    left = nullptr;
+    right = nullptr;
+    parent = nullptr;
+    // initialize data, left, right, and parent above
+  }
+
+  Node (const T& d, NodePtr l, NodePtr r, NodePtr p)
+  {
+    data = d;
+    left = l;
+    right = r;
+    parent = p;
+    // initialize data, left, right, and parent above
+  }
+
+  //**
+
+  T        data;
+  NodePtr  left;
+  NodePtr  right;
+  NodePtr  parent;
+
+};
+
+/************************************************************/
+
+// Forward declaration
+template<typename T>
+class SearchTree;
+
+/************************************************************/
+
+template<typename T>
+struct TreeIterator
+{
+  friend class SearchTree<T>;
+
+  typedef TreeIterator<T>  Self;
+  typedef Node<T>*         NodePtr;
+  typedef const Node<T>*   ConstNodePtr;
+
+  typedef T                value_type;
+  typedef const T*         pointer;
+  typedef const T&         reference;
+
+  TreeIterator ()
+    : m_nodePtr ()
+  { }
+
+  explicit
+  TreeIterator (ConstNodePtr n)
+    : m_nodePtr (n)
+  { }
+
+  reference
+  operator* () const
+  {
+    return m_nodePtr->data;
+    // Return the data associated with the node
+  }
+
+  // Return address of node's data member
+  pointer
+  operator-> () const
+  {
+    return &*this;
+  }
+
+  // Pre
+  Self&
+  operator++ ()
+  {
+    m_nodePtr = increment (m_nodePtr);
+
+    return *this;
+  }
+
+  // Post
+  Self
+  operator++ (int)
+  {
+    Self temp (*this);
+
+    // Increment iterator so it points to in-order successor
+    m_nodePtr = increment (m_nodePtr);
+
+    return temp;
+  }
+
+  // Pre
+  Self&
+  operator-- ()
+  {
+    m_nodePtr = decrement (m_nodePtr);
+
+    return *this;
+  }
+
+  // Post
+  Self
+  operator-- (int)
+  {
+    Self temp (*this);
+
+    // Decrement iterator so it points to in-order predecessor
+    m_nodePtr = decrement (m_nodePtr);
+
+    return temp;
+  }
+
+  bool
+  operator== (const Self& i) const
+  {
+    return m_nodePtr == i.m_nodePtr;
+  }
+
+  bool
+  operator!= (const Self& i) const
+  {
+    return m_nodePtr != i.m_nodePtr;
+  }
+
+  bool
+  safe () const
+  {
+    return m_nodePtr != nullptr;
+  }
+  
+private:
+
+  //PRECONDITION: n is not end()
+  static ConstNodePtr
+  increment (ConstNodePtr n)
+  {
+    if (n == nullptr)
+      return nullptr;
+    
+    // Find in-order successor
+    NodePtr current = const_cast<NodePtr>(n);
+
+    if (current->right != nullptr)
+    {
+      current = current->right;
+
+      while (current->left != nullptr)
+      {
+	current = current->left;
+      }
+    }
+    
+    else
+    {
+      auto oneback = current;
+      while (oneback != current->left && current->parent != oneback)
+      {
+	oneback = current;
+	current = current->parent;
+      }      
+    }
+    
+    return current;
+  }
+
+  //PRECONDITION: n is not begin()... or end?
+  static ConstNodePtr
+  decrement (ConstNodePtr n)
+  {
+    if (n == nullptr)
+      return nullptr;
+
+    // Find in-order predecessor
+    NodePtr current = const_cast<NodePtr>(n);
+    
+    if (current->left != nullptr)
+    {
+      current = current->left;
+
+      while (current->right != nullptr)
+      {
+	current = current->right;
+      }
+    }
+    
+    else
+    {
+      auto oneback = current;
+      while (oneback != current->right)
+      {
+	oneback = current;
+	current = current->parent;
+      }      
+    }
+    
+    //special case of if n is end, return max
+    return current;
+  }
+
+private:
+
+  ConstNodePtr m_nodePtr;
+
+};
+
+/************************************************************/
+
+template<typename T>
+class SearchTree
+{
+  friend class TreeIterator<T>;
+
+  public:
+
+    typedef T             value_type;
+    typedef T*            pointer;
+    typedef const T*      const_pointer;
+    typedef T&            reference;
+    typedef const T&      const_reference;
+
+    typedef TreeIterator<T> iterator;
+    typedef TreeIterator<T> const_iterator;
+
+    //   Header parent points to root of tree
+    //   Header left points to smallest node
+    //   Header right points to largest node
+    SearchTree ()
+        : m_header (), m_size (0)
+    {
+      // this should be blank
+    }
+
+    //copy constructor
+    explicit
+    SearchTree (SearchTree& t)
+        : m_header (),  m_size (0)
+    {
+      insertTree (t.m_header.parent);
+    }
+  
+    ~SearchTree ()
+    {
+      clear ();
+    }
+
+    //assignment operator
+    SearchTree&
+    operator= (SearchTree& rhs)
+    {
+      if (this != &rhs)
+      {
+	clear ();
+	insertTree (rhs.m_header.parent);
+      }
+      
+      return *this;
+    }
+  
+    bool
+    empty () const
+    {
+      return (m_size == 0);
+    }
+
+    size_t
+    size () const
+    {
+      return m_size;
+    }
+
+    iterator
+    begin ()
+    {
+      return iterator (m_header.left);
+      // Build an iterator that points to the smallest element
+    }
+
+    const_iterator
+    begin () const
+    {
+      return iterator (m_header.left);
+      // Build an iterator that points to the smallest element
+    }
+
+    iterator
+    end ()
+    {
+      return iterator (&m_header);
+      // Build an iterator that points to one beyond the end
+    }
+
+    const_iterator
+    end () const
+    {
+      return iterator (&m_header);
+      // Build an iterator that points to one beyond the end
+    }
+
+    iterator
+    find (const T& v) const
+    {
+      ConstNodePtr n = findHelper (v);
+      if (n == nullptr)
+      {
+        // Wasn't found so want to return end ()
+        n = &m_header;
+      }
+      return iterator (n);
+    }
+
+    std::pair<iterator, bool>
+    insert (const T& v)
+    {
+      NodePtr insertedNode = insert (v, m_header.parent, &m_header);
+      bool inserted = insertedNode != nullptr;
+      if (inserted)
+      {
+        // Update header left to point to smallest node
+        if (m_header.left == nullptr || v < m_header.left->data)
+          m_header.left = insertedNode;
+        // Update header right to point to largest node
+        if (m_header.right == nullptr || v > m_header.right->data)
+          m_header.right = insertedNode;
+      }
+
+      return std::make_pair (iterator (insertedNode), inserted);
+    }
+
+    size_t
+    erase (const T& v)
+    {
+      // Update header left to point to smallest node
+      if (m_header.left != nullptr && v == m_header.left->data)
+        m_header.left =
+	  const_cast<NodePtr> (iterator::increment (m_header.left));
+      // Update header right to point to smallest node
+      if (m_header.right != nullptr && v == m_header.right->data)
+        m_header.right =
+	  const_cast<NodePtr> (iterator::decrement (m_header.right));
+
+      bool erased = erase (v, m_header.parent, &m_header);
+
+      return erased ? 1 : 0;
+    }
+
+    void
+    clear ()
+    {
+      if (m_size == 0)
+	return;
+
+      clear (m_header.parent);
+      
+      m_header.parent = nullptr;
+      m_header.left = nullptr;
+      m_header.right = nullptr;
+      
+      m_size = 0;
+      // Delete all nodes and set size to 0
+    }
+
+    void
+    printInorder (ostream& out) const
+    {
+      printInorder (out, m_header.parent);
+    }
+
+    void
+    printLevelorder (ostream& out) const
+    {
+      printLevelorder (out, m_header.parent);
+    }
+
+  private:
+
+    typedef struct Node<T> Node;
+    typedef Node*          NodePtr;
+    typedef const Node*    ConstNodePtr;
+
+    NodePtr
+    minimum (NodePtr r) const
+    {
+      // Find minimum node in r's subtree
+      while (r->left != nullptr)
+      {
+        r = r->left;
+      }
+      
+      return r;
+    }
+
+    NodePtr
+    maximum (NodePtr r) const
+    {
+      while (r->right != nullptr)
+      {
+        r = r->right;
+      }
+      
+      return r;
+      // Find maximum node in r's subtree
+    }
+
+    ConstNodePtr
+    findHelper (const T& v) const
+    {
+      NodePtr iter = m_header.parent;
+      while (iter != nullptr)
+      {
+	if (v == iter->data)
+	{
+	  return iter;
+	}
+	else if (v < iter->data)
+	{
+	  iter = iter->left;
+	}
+	else
+	{
+	  iter = iter->right;
+	}
+      }
+      
+      return ConstNodePtr (iter);
+      // Return a pointer to the node that contains "v"
+    }
+
+    NodePtr
+    insert (const T& v, NodePtr& r, NodePtr parent)
+    {
+      if (r == nullptr)
+      {
+	r = new Node (v, nullptr, nullptr, parent);
+      }
+
+      else
+      {
+	if (v < r->data)
+	{
+	  return insert(v, r->left, r);
+	}
+
+	else
+        {
+	  return insert(v, r->right, r);
+	}
+      }
+
+      ++m_size;
+      return r;
+      
+      // Insert "v" into the tree rooted at "r"
+      // Use "parent" for recursion and setting the parent of the
+      //   node containing "v"
+    }
+
+    bool
+    erase (const T& v, NodePtr& r, NodePtr parent)
+    {
+      if (r == nullptr)
+	return false;
+      
+      if (v < r->data)
+	return erase (v, r->left, r);
+      
+      else if (v > r->data)
+	return erase (v, r->right, r);
+
+      else // v = r->data
+      {
+	//if r has both children...
+	if (r->left != nullptr && r->right != nullptr)
+        {
+	  //get inorder successor
+	  NodePtr succ =
+	    const_cast<NodePtr> (iterator::increment (r));
+
+	  //copy data, for simplicity
+	  r->data = succ->data;
+
+	  NodePtr replacement = succ->right;
+
+	  //if has child, use as replacement, update its parent
+	  if (replacement != nullptr)
+	  {
+	    replacement->parent = succ->parent;
+	  }
+
+	  //else: replacement is a nullptr, so its fine
+	  if (succ == succ->parent->left)
+	  {
+	    succ->parent->left = replacement;
+	  }
+
+	  else //succ = succ->parent->right
+	  {
+	    succ->parent->right = replacement;
+	  }
+	  
+	  delete succ;
+        }
+	
+	// if r only has left child, use left child as replacement
+	else if (r->left != nullptr)
+	{
+	  auto temp = r;
+	  r = r->left;
+	  r->parent = parent;
+	  delete temp;
+        }
+
+	// only has right child, use right child as replacement
+	else if (r->right != nullptr)
+        {
+	  auto temp = r;
+	  r = r->right;
+	  r->parent = parent;
+	  delete temp;
+        }
+
+	else
+        {
+	  // has no children
+	  auto temp = r;
+	  r = nullptr;
+	  delete temp;
+	}
+
+	--m_size;
+	return true;
+      }
+    }
+
+    void
+    insertTree (NodePtr r)
+    {
+      if (r == nullptr)
+	return;
+      
+      insert (r->data);
+      insertTree (r->left);
+      insertTree (r->right);
+    }
+  
+    void
+    clear (NodePtr r)
+    {
+      if (r == nullptr)
+	return;
+
+      clear (r->left);
+      clear (r->right);
+      delete r;
+      // Delete all nodes
+    }
+
+    void
+    printInorder (ostream& out, NodePtr r) const
+    {
+      if (r != nullptr)
+      {
+        printInorder (out, r->left);
+        out << r->data << " ";
+        printInorder (out, r->right);
+      }
+    }
+
+    void
+    printLevelorder (ostream& out, NodePtr r) const
+    {
+      if (r == nullptr)
+	return;
+      
+      queue<NodePtr> q;
+      q.push (r);
+      while (!q.empty ())
+      {
+        r = q.front ();
+        q.pop ();
+        out << r->data << " ";
+        if (r->left != nullptr)
+          q.push (r->left);
+        if (r->right != nullptr)
+          q.push (r->right);
+      }
+    }
+
+  private:
+
+    Node   m_header;
+    size_t m_size;
+
+};
+
+/************************************************************/
+
+// Output tree as ( e1 e2 e3 ... en )
+template<typename T>
+ostream&
+operator<< (ostream& out, const SearchTree<T>& tree)
+{
+  out << "( ";
+  //tree.printInorder (out);
+  tree.printLevelorder (out);
+  out << "); Size = " << tree.size ();
+
+  return out;
+}
+
+/************************************************************/
+
+#endif
+
+/************************************************************/

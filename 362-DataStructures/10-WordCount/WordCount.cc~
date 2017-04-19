@@ -1,0 +1,38 @@
+/*
+  Filename   : 
+  Author     : Steven Zelek
+  Course     : CSCI 362-01
+  Assignment : 
+  Description: 
+*/   
+
+/************************************************************/
+// System includes
+
+#include <iostream>
+#include <string>
+#include <cstdlib>
+
+/************************************************************/
+// Local includes
+
+
+/************************************************************/
+// Using declarations
+
+using std::cout;
+
+/************************************************************/
+// Function prototypes/global vars/typedefs
+
+/************************************************************/
+
+int      
+main (int argc, char* argv[]) 
+{        
+
+  return EXIT_SUCCESS; 
+}
+
+/************************************************************/
+/************************************************************/

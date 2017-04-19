@@ -1,0 +1,70 @@
+/*
+  Filename   : Template.cc
+  Author     : Gary M. Zoppetti
+  Course     : CSCI 362-01
+  Assignment : 
+  Description: Generic structure of a C++ source file
+*/   
+
+/************************************************************/
+// System includes
+
+#include <iostream>
+#include <string>
+#include <cstdlib>
+
+/************************************************************/
+// Local includes
+
+#include "List.hpp"
+
+/************************************************************/
+// Using declarations
+
+using std::cout;
+using std::endl;
+
+/************************************************************/
+// Function prototypes/global vars/typedefs
+
+/************************************************************/
+
+int      
+main (int argc, char* argv[]) 
+{        
+  List<int> intList;
+  /*  
+  cout << "Added a 1." << endl;
+
+  cout << "Inserted at front: "
+       << *(intList.insert (intList.end (), 1)) << endl;
+
+  cout << intList << endl;
+  cout << "Size: " << intList.size ()
+       << "\nFront: " << intList.front ()
+       << "\nBack: " << intList.back () << endl;
+  
+  cout << "Then inserted: "
+       << *(intList.insert (intList.end (), 2)) << endl;
+  */
+  cout << "Inserted at end: ";
+  for (size_t i = 9; i > 0; --i)
+    {
+       cout << *(intList.insert (intList.begin(), i)) << " ";
+    }
+
+  cout << endl << intList << endl;
+
+  cout << "HI";
+   //cout << "\nPopped first element: " << *(intList.erase (intList.begin ())) <<endl; 
+  //cout << intList << endl;
+  /*cout << "Size: " << intList.size ()
+       << "\nFront: " << intList.front ()
+       << "\nBack: " << intList.back () << endl;
+  */
+
+  return EXIT_SUCCESS; 
+}
+
+/************************************************************/
+/************************************************************/
